@@ -18,3 +18,14 @@ def ex02(l):
 		if i < 5:  
 			print(i)
 ex02(c)
+
+
+def is_prime(a):
+	print(a)
+	if (a%2) == 0:
+		return False
+	for i in range(2,a):
+		if a//i == type(int):
+			return True
+	return 'car'
+print(is_prime(13))
