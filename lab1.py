@@ -1,5 +1,14 @@
 import turtle
 
+print("Wael "*3)
+print("Wael "*100)
+number1= 4
+print(number1)
+number2 = number1/2
+print(number2)
+ls = [3,4,5]
+
+
 turtle.pensize(25)
 turtle.color("blue")
 turtle.penup()
