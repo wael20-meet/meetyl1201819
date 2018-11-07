@@ -26,4 +26,8 @@ class Person():
 		self.color = color
 		def eat_food(self):
 		print(self.name+" is eating "+self.food+" which is her favorite food")
+<<<<<<< HEAD
 		
+=======
+		
+>>>>>>> 682fe46008073d5d311acafdd0962cf3df4ccb0c

@@ -23,6 +23,23 @@ for i in range(3):
 	turtle.reset()
 	turtle.addshape("khaled.gif")
 	turtle.shape("khaled.gif")
+<<<<<<< HEAD
 
 
 turtle.mainloop()
+=======
+def peace():
+	turtle.speed(0)
+	turtle.forward(200)
+	turtle.right(30)
+	turtle.forward(75)
+	turtle.right(90)
+	turtle.forward(60)
+	turtle.penup()
+	turtle.setpos(0,0)
+	turtle.pendown()
+	turtle.right(1)
+for i in range(360):
+	peace()
+turtle.mainloop()
+>>>>>>> 682fe46008073d5d311acafdd0962cf3df4ccb0c
