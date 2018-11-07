@@ -12,6 +12,18 @@ class Animal(object):
 		print(self.sound)
 		for i in range(3):
 			print(self.sound)
-cat = Animal("meow" , "kitty" ,"13","red")
-cat.eat("cheese")
+cat = Animal("meow" , "kitty" ,"13","cheese" , "red")
+cat.eat()
 cat.description()
+cat.make_sound()
+
+class Person():
+	def __init__(self,sound,name,age,food,color):
+		self.sound = sound
+		self.name = name 
+		self.age = age 
+		self.food = food 
+		self.color = color
+		def eat_food(self):
+		print(self.name+" is eating "+self.food+" which is her favorite food")
+		
