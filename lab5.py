@@ -121,14 +121,57 @@
 
 # #problem6
 
-class Bear():
-	def __init__(self, name):
-		self.name = name
-		print("A new bear created. Its name is: " + self.name)
-	def say_hi(self):
-		print("Hi! I’m a bear. My name is: " + self.name)
-my_bear = Bear("Danny")
-print(my_bear.say_hi())
+# class Bear():
+# 	def __init__(self, name):
+# 		self.name = name
+		
+# 	def say_hi(self):
+# 		print("A new bear created. Its name is: " + self.name)
+# 		print("Hi! I'm a bear my name is" + self.name)
+		
+# my_bear = Bear("Danny")
+# print(my_bear.say_hi())
+
+
+# #problem7
+ 
+# balloons = 5
+# name = "Ron"
+# color = "Yellow"
+# print("This is a tale about " , balloons , "balloons. The first kid is " , name ,  "who got a " , color , "balloon")
+
+
+# #problem8
+
+# class Cake():
+# 	def __init__(self, flavor):
+# 		self.cake_flavor = flavor
+
+# 	def eat(self):
+# 		print('Yummy!!! Eating a', self.cake_flavor, 'cake :')
+
+# cake0 = Cake("chocolate")
+# cake0.eat()
+# # what I want to be printed: Yummy!!! Eating a chocolate cake :)
+
+
+# #problem9
+
+class Cat():
+def__init__(self, name):
+self.name = name
+self.age = 0 
+	def birthday(self):
+		self.age += 1
+		if self.age >= 100
+			print(“Dong dong, the cat is dead!”)
+		else:
+			print(self.name, ‘hasing its’, self.age, ‘birthday!’)
+
+my_cat = Cat(“Salem”)
+my_cat.birthday(8)
+# what I want: my cat to celebrate its 8th birthday (and all the 
+# birthdays that come before that)
 
 
 
