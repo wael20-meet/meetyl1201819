@@ -78,7 +78,7 @@
 # avg = sum / len(grades)
 
 # if avg >= 90:
-#     letter_grade = "A"
+#     letter_grade = "A
 # elif avg >= 80 and avg < 90:
 #     letter_grade = "B"
 # elif avg > 69 and avg < 80:
@@ -126,6 +126,7 @@
 # 		self.name = name
 		
 # 	def say_hi(self):
+
 # 		print("A new bear created. Its name is: " + self.name)
 # 		print("Hi! I'm a bear my name is" + self.name)
 		

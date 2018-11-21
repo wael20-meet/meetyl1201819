@@ -42,4 +42,4 @@ def peace():
 for i in range(360):
 	peace()
 turtle.mainloop()
->>>>>>> 682fe46008073d5d311acafdd0962cf3df4ccb0c
+
