@@ -11,6 +11,6 @@ import random
 
 		def random_color(self):
 			R = randrange(0,257,10)
-			
-
+			G = randrange(0,257,10)
+			B = randrange(0,257)
 
