@@ -5,8 +5,6 @@ class Ball(Turtle):
 	def __init__(self,radius,color,speed,dx,dy):
 		Turtle.__init__(self)
 		self.shape('circle')
-
-		
 		self.radius = radius
 		self.shapesize(self.radius/10)
 		self.color(color)
@@ -41,4 +39,8 @@ while True:
 		ball1.dy = ball1.dy *-1
 		ball.dx = ball.dx *-1
 		ball.dy = ball.dy *-1
+<<<<<<< HEAD
 turtle.mainloop()
+=======
+turtle.mainloop()
+>>>>>>> 807944e3676a9983e654fe841e381364de9edba7
