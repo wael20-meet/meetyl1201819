@@ -29,6 +29,4 @@ class Ball(Turtle):
 		self.goto(new_x)
 		self.goto(new_y)
 
-wael= Ball(0,0,0,0,100,"red")
 
-turtle.mainloop()

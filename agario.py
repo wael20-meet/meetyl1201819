@@ -1,186 +1,232 @@
-import pygame,random,math
 
-pygame.init()
-colors_players = [(37,7,255),(35,183,253),(48,254,241),(19,79,251),(255,7,230),(255,7,23),(6,254,13)]
-colors_cells = [(80,252,54),(36,244,255),(243,31,46),(4,39,243),(254,6,178),(255,211,7),(216,6,254),(145,255,7),(7,255,182),(255,6,86),(147,7,255)]
-colors_viruses = [(66,254,71)]
-screen_width, screen_height = (800,500)
-surface = pygame.display.set_mode((screen_width,screen_height))
-t_surface = pygame.Surface((95,25),pygame.SRCALPHA) #transparent rect for score
-t_lb_surface = pygame.Surface((155,278),pygame.SRCALPHA) #transparent rect for leaderboard
-t_surface.fill((50,50,50,80))
-t_lb_surface.fill((50,50,50,80))
-pygame.display.set_caption("Agar.io")
-cell_list = list()
-clock = pygame.time.Clock()
-try:
-    font = pygame.font.Font("Ubuntu-B.ttf",20)
-    big_font = pygame.font.Font("Ubuntu-B.ttf",24)
-except:
-    print("Font file not found: Ubuntu-B.ttf")
-    font = pygame.font.SysFont('Ubuntu',20,True)
-    big_font = pygame.font.SysFont('Ubuntu',24,True)
+import time
+import turtle
+from turtle import *
+import random
+turtle.tracer(0)
+turtle.hideturtle()
+import math
+import sys
+colormode(255) 
+turtle.setup(950,534)
 
-def drawText(message,pos,color=(255,255,255)):
-        surface.blit(font.render(message,1,color),pos)
 
-def getDistance(pos1,pos2):
-    px,py = pos1
-    p2x,p2y = pos2
-    diffX = math.fabs(px-p2x)
-    diffY = math.fabs(py-p2y)
 
-    return ((diffX**2)+(diffY**2))**(0.5)
+class Ball(Turtle):
+    def __init__(self, x, y, dx, dy, radius, color):
+        Turtle.__init__(self)
+        self.pu()
+        self.goto(x,y)
+        self.dx = dx
+        self.dy = dy
+        self.radius = radius
+        self.shapesize(radius/10)
+        self.shape("circle")
 
-class Camera:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.width = screen_width
-        self.height = screen_height
-        self.zoom = 0.5
+        r = random.randint (0,255)
+        g = random.randint (0,255)
+        b = random.randint (0,255)
+        self.color((r,g,b))
 
-    def centre(self,blobOrPos):
-        if(isinstance(blobOrPos,Player)):
-            p = blobOrPos
-            self.x = (p.startX-(p.x*self.zoom))-p.startX+((screen_width/2))
-            self.y = (p.startY-(p.y*self.zoom))-p.startY+((screen_height/2))
-        elif(type(blobOrPos) == tuple):
-            self.x,self.y = blobOrPos
+    def move(self, screen_width, screen_height):
+            currentx = self.xcor()
+            currenty = self.ycor()
+            newx = currentx + self.dx
+            newy = currenty + self.dy
+            right_side_ball = newx + self.radius
+            left_side_ball = newx - self.radius
+            top_side_ball = newy + self.radius
+            bottom_side_ball = newy - self.radius
+            self.goto (newx , newy)
 
-class Player:
-    def __init__(self,surface,name = ""):
-        self.startX = self.x = random.randint(100,400)
-        self.startY = self.y = random.randint(100,400)
-        self.mass = 20
-        self.surface = surface
-        self.color = colors_players[random.randint(0,len(colors_players)-1)]
-        self.name = name
-        self.pieces = list()
-        piece = Piece(surface,(self.x,self.y),self.color,self.mass,self.name)
+            if right_side_ball >= screen_width:
+                self.dx = -self.dx
+            
+            if left_side_ball <= -screen_width:
+                self.dx = -self.dx
+            
+            if top_side_ball >= screen_height:
+                self.dy = -self.dy
 
-    def update(self):
-        self.move()
-        self.collisionDetection()
+            if bottom_side_ball <= -screen_height:
+                self.dy = -self.dy
 
-    def collisionDetection(self):
-        for cell in cell_list:
-            if(getDistance((cell.x,cell.y),(self.x,self.y)) <= self.mass/2):
-                self.mass+=0.5
-                cell_list.remove(cell)
 
-    def move(self):
-        dX,dY = pygame.mouse.get_pos()
-        rotation = math.atan2(dY-(float(screen_height)/2),dX-(float(screen_width)/2))*180/math.pi
-        speed = 5-1
-        vx = speed * (90-math.fabs(rotation))/90
-        vy = 0
-        if(rotation < 0):
-            vy = -speed + math.fabs(vx)
-        else:
-            vy = speed - math.fabs(vx)
-        self.x += vx
-        self.y += vy
 
-    def feed(self):
-        pass
+score = 0
 
-    def split(self):
-        pass
+RUNNING = True
+sleep = 0.01999
+SCREEN_WIDTH = turtle.getcanvas().winfo_width()//2
+SCREEN_HEIGHT =turtle.getcanvas().winfo_height()//2
 
-    def draw(self,cam):
-        col = self.color
-        zoom = cam.zoom
-        x = cam.x
-        y = cam.y
-        pygame.draw.circle(self.surface,(col[0]-int(col[0]/3),int(col[1]-col[1]/3),int(col[2]-col[2]/3)),(int(self.x*zoom+x),int(self.y*zoom+y)),int((self.mass/2+3)*zoom))
-        pygame.draw.circle(self.surface,col,(int(self.x*cam.zoom+cam.x),int(self.y*cam.zoom+cam.y)),int(self.mass/2*zoom))
-        if(len(self.name) > 0):
-            fw, fh = font.size(self.name)
-            drawText(self.name, (self.x*cam.zoom+cam.x-int(fw/2),self.y*cam.zoom+cam.y-int(fh/2)),(50,50,50))
+MY_BALL = Ball(0,0,30,20,30,"yellow")
 
-class Piece:
-    def __init__(self,surface,pos,color,mass,name,transition=False):
-        self.x,self.y = pos
-        self.mass = mass
-        self.splitting = transition
-        self.surface = surface
-        self.name = name
+NUMBER_OF_BALLS = 8
+MINIMUM_BALL_RADIUS = 25
+MAXIMUM_BALL_RADIUS = 40
+MINIMUM_BALL_DY = -5
+MAXIMUM_BALL_DY = 5
+MINIMUM_BALL_DX = -5
+MAXIMUM_BALL_DX = 5
 
-    def draw(self):
-        pass
+BALLS = []
 
-    def update(self):
-        if(self.splitting):
-            pass
+for i in range (NUMBER_OF_BALLS):
+    x = random.randint(int(-SCREEN_WIDTH) + int(MAXIMUM_BALL_RADIUS) , int(SCREEN_WIDTH) - int(MAXIMUM_BALL_RADIUS))
+    y = random.randint(int(-SCREEN_HEIGHT) + int(MAXIMUM_BALL_RADIUS),int(SCREEN_HEIGHT) - int(MAXIMUM_BALL_RADIUS))
+    dx = random.randint(MINIMUM_BALL_DX,MAXIMUM_BALL_DX)
+    if dx == 0:
+        dx = random.randint(MINIMUM_BALL_DX,MAXIMUM_BALL_DX)
+    dy = random.randint(MINIMUM_BALL_DY,MAXIMUM_BALL_DY)
+    if dy == 0:
+        dy = random.randint(MINIMUM_BALL_DY,MAXIMUM_BALL_DY)
+    radius = random.randint(MINIMUM_BALL_RADIUS,MAXIMUM_BALL_RADIUS)
+    color = (random.random(), random.random(), random.random())
+    ball = Ball(x, y, dx, dy, radius, color)
 
-class Cell:
-    def __init__(self,surface):
-        self.x = random.randint(20,1980)
-        self.y = random.randint(20,1980)
-        self.mass = 7
-        self.surface = surface
-        self.color = colors_cells[random.randint(0,len(colors_cells)-1)]
+    BALLS.append (ball)
 
-    def draw(self,cam):
-        pygame.draw.circle(self.surface,self.color,(int((self.x*cam.zoom+cam.x)),int(self.y*cam.zoom+cam.y)),int(self.mass*cam.zoom))
 
-def spawn_cells(numOfCells):
-    for i in range(numOfCells):
-        cell = Cell(surface)
-        cell_list.append(cell)
+def move_all_balls():
+    for cow in BALLS:
+        cow.move(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-def draw_grid():
-    for i in range(0,2001,25):
-        pygame.draw.line(surface,(230,240,240),(0+camera.x,i*camera.zoom+camera.y),(2001*camera.zoom+camera.x,i*camera.zoom+camera.y),3)
-        pygame.draw.line(surface,(230,240,240),(i*camera.zoom+camera.x,0+camera.y),(i*camera.zoom+camera.x,2001*camera.zoom+camera.y),3)
+def collide(ball_a, ball_b):
+    ball_a_pos = ball_a.pos()
+    ball_b_pos = ball_b.pos()   
+    if ball_a == ball_b :
+        return False
 
-camera = Camera()
-blob = Player(surface,"Viliami")
-spawn_cells(2000)
+        
+    ball_a.xcor()   
+    ball_a.ycor()   
+    ball_b.xcor()   
+    ball_b.ycor()   
 
-def draw_HUD():
-    w,h = font.size("Score: "+str(int(blob.mass*2))+" ")
-    surface.blit(pygame.transform.scale(t_surface,(w,h)),(8,screen_height-30))
-    surface.blit(t_lb_surface,(screen_width-160,15))
-    drawText("Score: " + str(int(blob.mass*2)),(10,screen_height-30))
-    surface.blit(big_font.render("Leaderboard",0,(255,255,255)),(screen_width-157,20))
-    drawText("1. G #1",(screen_width-157,20+25))
-    drawText("2. G #2",(screen_width-157,20+25*2))
-    drawText("3. ISIS",(screen_width-157,20+25*3))
-    drawText("4. ur mom",(screen_width-157,20+25*4))
-    drawText("5. w = pro team",(screen_width-157,20+25*5))
-    drawText("6. jumbo",(screen_width-157,20+25*6))
-    drawText("7. [voz]plz team",(screen_width-157,20+25*7))
-    drawText("8. G #3",(screen_width-157,20+25*8))
-    drawText("9. doge",(screen_width-157,20+25*9))
-    if(blob.mass <= 500):
-        drawText("10. G #4",(screen_width-157,20+25*10))
+    DISTANCE_BETWEEN_CENTERS = ((ball_a.xcor()-ball_b.xcor())**2 + (ball_a.ycor()-ball_b.ycor())**2)**0.5
+
+    if DISTANCE_BETWEEN_CENTERS+10 <= ball_a.radius + ball_b.radius:
+        return True
     else:
-        drawText("10. Viliami",(screen_width-157,20+25*10),(210,0,0))
+        return False
+       
+       
 
-while(True):
-    clock.tick(70)
-    for e in pygame.event.get():
-        if(e.type == pygame.KEYDOWN):
-            if(e.key == pygame.K_ESCAPE):
-                pygame.quit()
-                quit()
-            if(e.key == pygame.K_SPACE):
-                blob.split()
-            if(e.key == pygame.K_w):
-                blob.feed()
-        if(e.type == pygame.QUIT):
-            pygame.quit()
-            quit()
-    blob.update()
-    camera.zoom = 100/(blob.mass)+0.3
-    camera.centre(blob)
-    surface.fill((242,251,255))
-    #surface.fill((0,0,0))
-    draw_grid()
-    for c in cell_list:
-        c.draw(camera)
-    blob.draw(camera)
-    draw_HUD()
-    pygame.display.flip()
+def check_all_balls_collision():
+    for ball_a in balls:
+        for ball_b in balls:
+            if check_collide(ball_a,ball_b) == True:
+                radius1 = ball_a.r
+                radius2 = ball_b.r
+                random_x = random.randint(screen_random1_x,screen_random2_x)
+                random_y = random.randint(screen_random1_y,screen_random2_y)
+                random_dx = random.randint(minimum_ball_dx,maximum_ball_dx)
+                while random_dx == 0:
+                    random_dx = random.randint(minimum_ball_dx,maximum_ball_dx)
+                random_dy = random.randint(minimum_ball_dy,maximum_ball_dy)
+                while random_dy == 0:
+                    random_dy = random.randint(minimum_ball_dy,maximum_ball_dy)
+                radius = random.randint(minimum_ball_radius,maximum_ball_radius)
+                color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+
+                if radius1 > radius2:
+                    ball_b.goto(random_x,random_y)
+                    ball_b.dx = random_dx
+                    ball_b.dy = random_dy
+                    ball_b.r = radius
+                    ball_b.shapesize(ball_b.r/10)
+                    ball_b.color = color
+                    ball_a.r += 0.5
+                    ball_a.shapesize(ball_a.r/10)
+                    
+                elif radius1 < radius2:
+                    ball_a.goto(random_x,random_y)
+                    ball_a.dx = random_dx
+                    ball_a.dy = random_dy
+                    ball_a.r = radius
+                    ball_a.shapesize(ball_a.r/10)
+                    ball_a.color = color
+                    ball_b.r += 0.5
+                    ball_b.shapesize(ball_b.r/10)
+
+
+
+                
+def check_myball_collision():
+    for i in BALLS:
+        if collide(i,MY_BALL) == True:
+            radius_i = i.radius
+            radius_MY_BALL= MY_BALL.radius
+            ball_a = MY_BALL
+            ball_b = i
+            if MY_BALL.radius <= i.radius:
+                RUNNING = False
+                turtle.goto(-200,0)
+                turtle.color("red")
+                turtle.write("GAME OVER  , YOU'RE A LOOOOOOOSER!!!!!!!", move=False, font=("Arial", 20, "bold"))
+                time.sleep(10)
+                sys.exit("Error message")
+
+
+            else:
+                X_coordinate = random.randint(int(-SCREEN_WIDTH) + int(MAXIMUM_BALL_RADIUS) , int(SCREEN_WIDTH) - int(MAXIMUM_BALL_RADIUS))
+                Y_coordinate = random.randint(int(-SCREEN_HEIGHT) + int(MAXIMUM_BALL_RADIUS),int(SCREEN_HEIGHT) - int(MAXIMUM_BALL_RADIUS))
+                X_axis_speed = random.randint(MINIMUM_BALL_DX,MAXIMUM_BALL_DX)
+                while X_axis_speed == 0:
+                    X_axis_speed = random.randint(MINIMUM_BALL_DX,MAXIMUM_BALL_DX)
+                Y_axis_speed  = random.randint(MINIMUM_BALL_DY,MAXIMUM_BALL_DY)
+                while Y_axis_speed  == 0:
+                    Y_axis_speed  = random.randint(MINIMUM_BALL_DY,MAXIMUM_BALL_DY)
+                radius = random.randint(MINIMUM_BALL_RADIUS, MAXIMUM_BALL_RADIUS)
+                r = random.randint(0,255)
+                g = random.randint(0,255)
+                b = random.randint(0,255)
+                color = (r,g,b)
+
+            
+                ball_b.goto(X_coordinate, Y_coordinate)
+                ball_b.dx = X_axis_speed 
+                ball_b.dy = Y_axis_speed
+                ball_b.shapesize(radius/10)
+                ball_b.color(color)
+                ball_a.radius = ball_a.radius+1 
+                ball_a.shapesize(ball_a.radius/10)
+
+
+    return True
+
+def movearound(event):
+    NEW_X_coordinate = event.x - SCREEN_WIDTH
+    NEW_Y_coordinate = -(event.y - SCREEN_HEIGHT)
+    MY_BALL.goto(NEW_X_coordinate, NEW_Y_coordinate)
+turtle.getcanvas().bind("<Motion>", movearound)
+turtle.listen()
+
+
+
+while RUNNING == True:
+    if SCREEN_WIDTH!=turtle.getcanvas().winfo_width()/2 or SCREEN_HEIGHT!=turtle.getcanvas().winfo_height()/2 :
+        SCREEN_WIDTH=turtle.getcanvas().winfo_width()/2 
+        SCREEN_HEIGHT=turtle.getcanvas().winfo_height()/2
+        move_all_balls()
+   
+    if check_myball_collision() == False:
+        running = False
+        turtle.goto(0,0)
+        turtle.write("Game Over",align="center",font=("Arial", 50, "normal"))
+        turtle.update()
+        time.sleep(5)
+
+     
+    turtle.update()
+    time.sleep(sleep)
+
+
+
+    move_all_balls()
+    check_myball_collision()
+
+    
+
+turtle.mainloop()
