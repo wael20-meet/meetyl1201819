@@ -12,6 +12,7 @@ turtle.setup(950,534)
 
 
 
+
 class Ball(Turtle):
     def __init__(self, x, y, dx, dy, radius, color):
         Turtle.__init__(self)
@@ -88,6 +89,19 @@ for i in range (NUMBER_OF_BALLS):
     BALLS.append (ball)
 
 
+food_list=[]
+for i in range(15):
+    r= 1
+
+    x=random.randint(-SCREEN_WIDTH + MAXIMUM_BALL_RADIUS, SCREEN_WIDTH - MAXIMUM_BALL_RADIUS)
+    y=random.randint(-SCREEN_HEIGHT + MAXIMUM_BALL_RADIUS, SCREEN_HEIGHT - MAXIMUM_BALL_RADIUS)
+    screen=turtle.Screen()
+    screen.addshape("flappy.gif")
+    FOOD=Ball(x,y,r,0,0,"pink")
+    FOOD.shape("flappy.gif")
+    food_list.append(FOOD)
+
+
 def move_all_balls():
     for cow in BALLS:
         cow.move(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -151,6 +165,26 @@ def check_all_balls_collision():
                     ball_b.shapesize(ball_b.r/10)
 
 
+def check_food_collision():
+    # global MY_BALL
+    for food in food_list:
+        if MY_BALL.radius <= food.radius:
+                RUNNING = False
+        elif collide(ball_a,ball_b) == True:
+                radius = MY_BALL
+                random_x = random.randint(screen_random1_x,screen_random2_x)
+                random_y = random.randint(screen_random1_y,screen_random2_y)
+                radius = random.randint(minimum_ball_radius,maximum_ball_radius)
+                color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+
+        elif radius.MY_BALL > radius.food:
+                    MY_BALL.goto(random_x,random_y)
+                    MY_BALL.r = radius
+                    MY_BALL.shapesize(Ball.r/10)
+                    MY_BALL.color = color
+                    MY_BALL += 0.5
+                   
+                    
 
                 
 def check_myball_collision():
@@ -226,6 +260,7 @@ while RUNNING == True:
 
     move_all_balls()
     check_myball_collision()
+    check_food_collision()
 
     
 
